@@ -14,7 +14,7 @@ namespace Calculator
             while (ifade.ToUpper() != "EXIT")
             {
                 Expression expression = new Expression(ifade);
-                Console.WriteLine($"{expression.ToString()} = {expression.Value}");
+                Console.WriteLine($"{ifade} = {expression.Value}");
                 ifade = Console.ReadLine();
             }
         }

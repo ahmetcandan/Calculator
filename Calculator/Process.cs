@@ -38,17 +38,22 @@ namespace Calculator
                         Expressions.Add(new Expression(StringExpression.Substring(parantezStartIndex + 1, i - parantezStartIndex - 1)));
                         if (i + 1 < StringExpression.Length && operationsChars.Contains(StringExpression[i + 1]))
                         {
-                            Operations.Add(StringExpression[i + 1]);
-                            lastProcessEndIndex = i + 1;
+                            i++;
+                            Operations.Add(StringExpression[i]);
+                            lastProcessEndIndex = i;
                         }
                         continue;
                     }
                 }
                 else if (acikParantez == kapaliParantez && (operationsChars.Contains(StringExpression[i]) || i == StringExpression.Length - 1))
                 {
-                    if (StringExpression.Substring(lastProcessEndIndex + 1, i - lastProcessEndIndex - 1 + (i == StringExpression.Length - 1 ? 1 : 0)) == StringExpression)
+                    bool lastIndex = i == StringExpression.Length - 1;
+                    string _expression = StringExpression.Substring(lastProcessEndIndex + 1, i - lastProcessEndIndex - 1 + (lastIndex ? 1 : 0));
+                    if (_expression == StringExpression)
                         return;
-                    Expressions.Add(new Expression(StringExpression.Substring(lastProcessEndIndex + 1, i - lastProcessEndIndex - 1 + (i == StringExpression.Length - 1 ? 1 : 0))));
+                    //if (StringExpression.Substring(lastProcessEndIndex + 1, i - lastProcessEndIndex - 1 + (i == StringExpression.Length - 1 ? 1 : 0)) == StringExpression)
+                    //    return;
+                    Expressions.Add(new Expression(_expression));
                     lastProcessEndIndex = i - 1;
                     if (i + 1 < StringExpression.Length && operationsChars.Contains(StringExpression[i]))
                     {
@@ -84,7 +89,11 @@ namespace Calculator
         {
             Process process = null;
             if (operations.Count == 0)
+            {
+                if (expressions[0].Operations.Count > 0)
+                    return new Process(expressions[0].Value);
                 return new Process(expressions[0].StringExpression);
+            }
 
             if (operations.Contains('+') || operations.Contains('-'))
                 for (int i = operations.Count - 1; i >= 0; i--)
