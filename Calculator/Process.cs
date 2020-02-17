@@ -16,43 +16,40 @@ namespace Calculator
             Expressions = new List<Expression>();
             Operations = new List<char>();
             StringExpression = expression;
-            int acikParantez = 0;
-            int parantezStartIndex = -1;
-            int kapaliParantez = 0;
+            int openBrackets = 0;
+            int bracketStartIndex = -1;
+            int closeBrackets = 0;
             int lastProcessEndIndex = -1;
 
             for (int i = 0; i < StringExpression.Length; i++)
             {
                 if (StringExpression[i] == '(')
                 {
-                    if (parantezStartIndex == -1)
-                        parantezStartIndex = i;
-                    acikParantez++;
+                    if (openBrackets == closeBrackets)
+                        bracketStartIndex = i;
+                    openBrackets++;
                 }
                 else if (StringExpression[i] == ')')
                 {
-                    kapaliParantez++;
-                    if (acikParantez == kapaliParantez)
+                    closeBrackets++;
+                    if (openBrackets == closeBrackets)
                     {
                         lastProcessEndIndex = i;
-                        Expressions.Add(new Expression(StringExpression.Substring(parantezStartIndex + 1, i - parantezStartIndex - 1)));
+                        Expressions.Add(new Expression(StringExpression.Substring(bracketStartIndex + 1, i - bracketStartIndex - 1)));
                         if (i + 1 < StringExpression.Length && operationsChars.Contains(StringExpression[i + 1]))
                         {
                             i++;
                             Operations.Add(StringExpression[i]);
                             lastProcessEndIndex = i;
                         }
-                        continue;
                     }
                 }
-                else if (acikParantez == kapaliParantez && (operationsChars.Contains(StringExpression[i]) || i == StringExpression.Length - 1))
+                else if (openBrackets == closeBrackets && (operationsChars.Contains(StringExpression[i]) || i == StringExpression.Length - 1))
                 {
                     bool lastIndex = i == StringExpression.Length - 1;
                     string _expression = StringExpression.Substring(lastProcessEndIndex + 1, i - lastProcessEndIndex - 1 + (lastIndex ? 1 : 0));
                     if (_expression == StringExpression)
                         return;
-                    //if (StringExpression.Substring(lastProcessEndIndex + 1, i - lastProcessEndIndex - 1 + (i == StringExpression.Length - 1 ? 1 : 0)) == StringExpression)
-                    //    return;
                     Expressions.Add(new Expression(_expression));
                     lastProcessEndIndex = i - 1;
                     if (i + 1 < StringExpression.Length && operationsChars.Contains(StringExpression[i]))
@@ -136,11 +133,6 @@ namespace Calculator
         public Process Left { get; set; }
         public Process Right { get; set; }
         public char Operation { get; set; }
-
-        public Process()
-        {
-
-        }
 
         public Process(Process p1, char operation, Process p2)
         {
